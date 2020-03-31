@@ -12,40 +12,30 @@
 #	# Build emacs image
 #	docker build -t emacs .
 #
-#	docker run -d \
-#	        -v /tmp/.X11-unix:/tmp/.X11-unix \
-#               -v /etc/localtime:/etc/localtime:ro \
-#               -v $HOME/git/orgfiles:$HOME/git/orgfiles
-#               -v $HOME/git/orgbinder:$HOME/git/orgbiner
-#		-e DISPLAY=unix$DISPLAY emacs
+#	docker run -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
+#	       -e DISPLAY="unix$DISPLAY" \
+#	       -e UNAME="emacser" \
+#	       -e GNAME="emacsers" \
+#	       -e UID="1000" \
+#	       -e GID="1000" \
+#	       -v <path_to_.emacs>:/home/.emacs \
+#	       -v <path_to_workspace>:/mnt/workspace
+#               
 
 # Base docker image
 FROM debian:bullseye-slim
 LABEL maintainer "Aaron Dornbos <dnrbs@airmail.cc>"
+ENV NO_AT_BRIDGE=1
 
 # Install Emacs and its dependencies
 RUN apt-get update && apt-get install -y \
     emacs \
-    git \
-    make \
     --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
-# Grab configuration deps from repo
-RUN mkdir ~/git \
-    ~/git/orgbinder \
-    ~/git/orgfiles \
-    ~/git/orgfiles/p \
-    cd ~/git/ \
-    git clone https://code.orgmode.org/bzg/org-mode.git
-    cd org-mode/ \
-    make autoloads \
-    cd ~/ \
-    git clone https://github.com/dornbosad/.emacs.git
-    git clone https://github.com/dornbosad/.fonts.git
-
 #   Autorun emacs
-ENTRYPOINT ["emacs"]
+ENTRYPOINT ["/usr/local/sbin/"]
+CMD ["bash", "-c", "emacs; /bin/bash"]
 
 #   Please note that getStarted.el will need to be ran first via M-x load-file RET ~/.emacs/getStarted.el
 #   Followed by M-x package-refresh-contents RET, M-x install-package RET use-package
