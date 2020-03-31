@@ -19,7 +19,6 @@
 
 # Base docker image
 FROM debian:bullseye-slim
-LABEL maintainer "Aaron Dornbos <dnrbs@airmail.cc>"
 
 # Install Emacs and its dependencies
 RUN apt-get update && apt-get install -y \
