@@ -27,7 +27,9 @@ LABEL maintainer "Aaron Dornbos <dnrbs@airmail.cc>"
 RUN apt-get update && apt-get install -y \
     emacs \
     git \
-    make
+    make \
+    --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
 
 # Grab configuration deps from repo
 RUN mkdir ~/git \
